@@ -1,0 +1,97 @@
+# Author: Caitlin Coulombe, T00756521
+# Date: October 18, 2024
+# Course: COMP 2211
+#
+# Assignment 3: A company uses codes to represent its products, for example ABC1234A5R-14. Valid codes
+# must have:
+#   # At least 10 characters (some codes have more than 10 characters)
+#   # Positions 4 thourgh 7 must be digits and represents the country in which the product will be sold
+#   # The character in the 10th position must be a capital letter and represents the security level of 
+#   the product
+# Write a Python program that will read 10 product codes from a text file (Codes.txt - in assignment). 
+# Determine if each conforms to the rules listed above:
+#   # If it does conform, print a heading Valid Code(s) are: and list the codes that are valid. If it 
+#   # does not conform, print a heading: Invalid Code(s) are: and list the codes that are invalid. Be 
+#   # sure to test all possible combinations
+#   # Further, if the code is valid, due to government security laws, products with a security level of
+#   # R (restricted) are no longer to be sold in countries with a country code of 2000 or higher. Output
+#   # a heading: Invalid Restricted Code(s) are: and list the codes that are invalid in case you encounter
+#   # any products that violate these new laws.
+#
+
+#---------------------------------------------------------------------
+# main() executes the main logic of the program
+#---------------------------------------------------------------------
+def main():
+    # variables
+    validList = []
+    invalidList = []
+    restrictedList = []
+    file = open("Codes.txt", "r")
+
+    for code in file:
+        code = code.strip()
+        isValid = testValid(code)
+        if(isValid):
+            isRestricted = testRestricted(code)
+            if(isRestricted):
+                restrictedList.append(code)
+            else:
+                validList.append(code)
+        else:
+            invalidList.append(code)
+
+    file.close()
+
+    print("Valid Code(s) are: ")
+    for code in validList:
+        print("• " + code.strip())
+    print("\nInvalid Code(s) are: ")
+    for code in invalidList:
+        print("• " + code.strip())
+    print("\nInvalid Restricted Code(s) are: ")
+    for code in restrictedList:
+        print("• " + code.strip())
+
+
+#---------------------------------------------------------------------
+# testValid() confirms that the code meets the requirements to be valid
+#---------------------------------------------------------------------
+def testValid(code):
+    length = len(code) >= 10
+
+    countryCode = code[3:7]     # needs to be characters 4-7 but its zero indexed?
+    countryIsDig = countryCode.isdigit()
+
+    securityChar = code[9]
+    secCharValid = securityChar.isupper() and securityChar.isalpha()
+
+    # testing:
+    # print("Code is", code)
+    # print("length is = ", len(code))
+    # print("countryCode is = ", countryCode, " and is it a digit? ", countryIsDig)
+    # print("securityChar is = ",  securityChar, " and is it valid? ", secCharValid)
+    # print()
+
+
+    return length and countryIsDig and secCharValid
+
+
+#---------------------------------------------------------------------
+# testRestricted() confirms that the code is not restricted for the country its from
+#---------------------------------------------------------------------
+def testRestricted(code):
+    countryCode = int (code[3:7])
+    securityChar = code[9]
+
+    # testing:
+    # print("Checking restricted for: ")
+    # print("countryCode is = ", countryCode, " and is it a digit? ", countryIsDig)
+    # print("securityChar is = ",  securityChar, " and is it valid? ", secCharValid)
+    # print()
+
+    return countryCode >= 2000 and securityChar == 'R'
+
+
+# call the main function
+main()
